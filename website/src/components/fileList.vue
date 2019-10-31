@@ -1,16 +1,18 @@
 <template>
   <div>
     <ul>
-      <li>
-        <div class="bg" :style="`width:${percent}%`"></div>
+      <li v-for="item in list" :key="item.id">
+        <!-- <div class="bg"></div> -->
         <div class="item-title">
-          xxx.jpg
+          {{item.filename}}
         </div>
         <div class="item-operate">
-          d
+          <span v-if="item.status=='0'">正在下载...</span>
+          <span v-if="item.status=='2'">下载失败</span>
+          <a v-if="item.status=='1'" :href="`/download/${item.sid}`" :download="item.filename">下载</a>
         </div>
         <div class="item-time">
-          2019.2.13 - 2019.3.13
+          {{item.createdAt | formatTime('yyyy-MM-dd')}} - 2019.3.13
         </div>
       </li>
     </ul>
@@ -22,17 +24,21 @@ import axios from 'axios'
 export default Vue.extend({
   data(){
     return {
-      percent:0,
+      list:[]
     }
   },
   async mounted(){
-    let list=await axios.get('/api/list/files');
+    let res=await axios.get('/api/_list/files');
+    this.list=res.data.data
   },
+  methods:{
+  }
 });
 </script>
 <style lang="scss" scoped>
 ul{
   li{
+    margin-top:.3rem;
     border:1px solid #f0f0f0;
     border-radius: 5px;
     display: flex;
